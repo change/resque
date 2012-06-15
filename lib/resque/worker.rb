@@ -139,6 +139,7 @@ module Resque
           run_hook :before_fork, job
           working_on job
 
+          t1 = Time.now
           if @child = fork
             srand # Reseeding
             procline "Forked #{@child} at #{Time.now.to_i}"
@@ -148,6 +149,8 @@ module Resque
               nil
             end
           else
+            t2 = Time.now
+            puts "Processing #{job.queue} since #{Time.now.to_i} (Time to fork= #{t2 - t1})"
             unregister_signal_handlers if !@cant_fork && term_child
             procline "Processing #{job.queue} since #{Time.now.to_i}"
             redis.client.reconnect # Don't share connection with parent

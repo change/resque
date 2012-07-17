@@ -139,9 +139,10 @@ module Resque
             Process.wait(@child)
           else
             t2 = Time.now
-            puts "Processing #{job.queue} since #{Time.now.to_i} (Time to fork= #{t2 - t1})"
             procline "Processing #{job.queue} since #{Time.now.to_i}"
             perform(job, &block)
+            t3 = Time.now
+            puts "Processing #{job.queue} since #{t2.to_i}  Fork duration= #{t2 - t1}  Execution duration= #{t3 - t2}"
             exit! unless @cant_fork
           end
 
